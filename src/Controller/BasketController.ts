@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import BasketService from "../Service/BasketService";
+import PlatziStoreService from "../Service/PlatziStoreService";
 
 class BasketController {
     
@@ -47,8 +48,23 @@ class BasketController {
         }catch(error){
             return res.status(500).json({ message: "Error fetching baskets", error });
         }
+    }
 
+    public async addProductToBasket(req: Request, res: Response){
+        const { clientId, productId } = req.params;
+        
+        try {
+            if (!clientId) return res.status(404).json({ message: 'ClientId is required' });
+            if (!productId) return res.status(404).json({ message: 'ProductId is required' });
+
+            const basket = await BasketService.addProductToBasket(clientId, productId);
+
+            return res.status(200).json(basket);
+        } catch (error: any) {
+            return res.status(500).json({ message: error.message || "Error fetching baskets" });
+        }
     }
 }
+
 
 export default new BasketController();

@@ -37,6 +37,34 @@ class BasketService {
             status: BasketStatus.OPEN
         })
     }
+
+    async addProductToBasket(clientId: string, productId: any){
+
+        const basket =  await this.getBasketByClientId(clientId);
+        const product = await PlatziStoreService.getExternalProductsById(productId);
+
+        if(!basket) throw new Error('Carrinho do cliente não encontrado');
+        if(!product) throw new Error('Produto não encontrado');
+
+        const index = basket.products.findIndex(p => p.id.toString() === productId.toString());
+        
+        if(index > -1){
+            basket.products[index].quantity +=1;
+        }else{
+            basket.products.push({
+                id: productId,
+                title: product.title,
+                price: product.price,
+                quantity: 1
+            });
+        }
+
+        basket.totalPrice = basket.products.reduce((sum, p) => sum + p.price * p.quantity, 0);
+
+        await basket.save();
+
+        return basket;
+    }
 }
 
 export default new BasketService();
