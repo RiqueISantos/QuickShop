@@ -40,7 +40,7 @@ Este projeto expõe uma API RESTful para manipulação de cestas de compras e in
 Clone o repositório e instale as dependências:
 
 ```bash
-git clone https://github.com/seu-usuario/seu-projeto.git
+git clone https://github.com/RiqueISantos/QuickShop.git
 cd seu-projeto
 npm install
 ```
