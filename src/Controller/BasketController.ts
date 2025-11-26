@@ -3,7 +3,32 @@ import BasketService from "../Service/BasketService";
 import { PaymentMethod } from "../enums/PaymentMethod";
 
 class BasketController {
-    
+
+    /**
+     * @swagger
+     * /basket:
+     *   post:
+     *     summary: Cria ou retorna o carrinho aberto de um cliente
+     *     tags:
+     *       - Basket
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               clientId:
+     *                 type: string
+     *                 example: "12345"
+     *     responses:
+     *       201:
+     *         description: Carrinho criado ou existente retornado
+     *       400:
+     *         description: ClientId não fornecido
+     *       500:
+     *         description: Erro interno do servidor
+     */
     public async createBasket(req: Request, res: Response) {
         
         const { clientId } = req.body;
@@ -20,6 +45,19 @@ class BasketController {
         }
     }
 
+    /**
+     * @swagger
+     * /basket:
+     *   get:
+     *     summary: Retorna todos os carrinhos
+     *     tags:
+     *       - Basket
+     *     responses:
+     *       200:
+     *         description: Lista de todos os carrinhos
+     *       500:
+     *         description: Erro interno do servidor
+     */
     public async getAllBaskets(req: Request, res: Response) {
         try {
             const baskets = await BasketService.getAllBaskets();
@@ -29,6 +67,31 @@ class BasketController {
         }
     }
 
+
+     /**
+     * @swagger
+     * /basket/{clientId}:
+     *   get:
+     *     summary: Retorna o carrinho de um cliente
+     *     tags:
+     *       - Basket
+     *     parameters:
+     *       - in: path
+     *         name: clientId
+     *         required: true
+     *         schema:
+     *           type: string
+     *         description: ID do cliente
+     *     responses:
+     *       200:
+     *         description: Carrinho retornado com sucesso
+     *       400:
+     *         description: ClientId não fornecido
+     *       404:
+     *         description: Cliente não encontrado
+     *       500:
+     *         description: Erro interno do servidor
+     */
     public async getBasketByClientId(req: Request, res: Response){
 
         const { clientId } = req.params;
@@ -50,6 +113,33 @@ class BasketController {
         }
     }
 
+
+     /**
+     * @swagger
+     * /basket/{clientId}/{productId}:
+     *   post:
+     *     summary: Adiciona um produto ao carrinho de um cliente
+     *     tags:
+     *       - Basket
+     *     parameters:
+     *       - in: path
+     *         name: clientId
+     *         required: true
+     *         schema:
+     *           type: string
+     *       - in: path
+     *         name: productId
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Produto adicionado ao carrinho
+     *       404:
+     *         description: Cliente ou produto não encontrado
+     *       500:
+     *         description: Erro interno do servidor
+     */
     public async addProductToBasket(req: Request, res: Response){
         const { clientId, productId } = req.params;
 
@@ -65,6 +155,43 @@ class BasketController {
         }
     }
 
+
+    /**
+     * @swagger
+     * /basket/{clientId}/{productId}:
+     *   patch:
+     *     summary: Atualiza a quantidade de um produto no carrinho
+     *     tags:
+     *       - Basket
+     *     parameters:
+     *       - in: path
+     *         name: clientId
+     *         required: true
+     *         schema:
+     *           type: string
+     *       - in: path
+     *         name: productId
+     *         required: true
+     *         schema:
+     *           type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               quantity:
+     *                 type: number
+     *                 example: 3
+     *     responses:
+     *       200:
+     *         description: Quantidade atualizada
+     *       400:
+     *         description: Dados inválidos
+     *       404:
+     *         description: Produto não encontrado no carrinho
+     */
     public async updateBasketProduct(req: Request, res: Response) {
         try {
             const { clientId, productId } = req.params;
@@ -90,6 +217,34 @@ class BasketController {
         }
     }
 
+
+     /**
+     * @swagger
+     * /basket/{clientId}/payment/{paymentMethod}:
+     *   post:
+     *     summary: Realiza o pagamento do carrinho de um cliente
+     *     tags:
+     *       - Basket
+     *     parameters:
+     *       - in: path
+     *         name: clientId
+     *         required: true
+     *         schema:
+     *           type: string
+     *       - in: path
+     *         name: paymentMethod
+     *         required: true
+     *         schema:
+     *           type: string
+     *           enum: [CREDIT_CARD, DEBIT_CARD, PIX, NONE]
+     *     responses:
+     *       200:
+     *         description: Pagamento realizado com sucesso
+     *       400:
+     *         description: Dados inválidos
+     *       500:
+     *         description: Erro interno do servidor
+     */
     public async paymentBasket(req: Request, res: Response){
 
         try{

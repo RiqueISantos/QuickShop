@@ -1,12 +1,13 @@
 import express from 'express';
 import RouterManagement from './Controller/RouterManagement';
+import { setupSwagger } from  './config/swagger'
 
 const api = express();
 
 api.use(express.json());
 api.disable('x-powered-by');
 api.use(RouterManagement)
-
+setupSwagger(api);
 
 const PORT = process.env.PORT;
 
