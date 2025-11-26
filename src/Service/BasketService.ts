@@ -1,4 +1,3 @@
-import { error } from 'console';
 import { BasketStatus } from '../enums/BasketStatus';
 import { PaymentMethod } from '../enums/PaymentMethod';
 import BasketModel, { Basket } from '../models/BasketModel';
@@ -38,7 +37,7 @@ class BasketService {
         })
     }
 
-    async addProductToBasket(clientId: string, productId: any){
+    async addProductToBasket(clientId: string, productId: any): Promise<Basket>{
 
         const basket =  await this.getBasketByClientId(clientId);
         const product = await PlatziStoreService.getExternalProductsById(productId);
@@ -66,7 +65,7 @@ class BasketService {
         return basket;
     }
 
-    async updateBasket(clientId: string, productId: any, quantity: number){
+    async updateBasket(clientId: string, productId: any, quantity: number): Promise<Basket>{
 
         const basket =  await this.getBasketByClientId(clientId);
     
@@ -89,6 +88,26 @@ class BasketService {
         await basket.save();
 
         return basket;
+    }
+
+    async paymentBasket(clientId: string, paymentMethod: PaymentMethod):Promise<Basket>{
+
+        const savedBasket = await this.getBasketByClientId(clientId);
+        
+        if (!savedBasket) {
+            throw new Error('Basket not found');
+        }
+
+        if (savedBasket.products.length === 0) {
+            throw new Error('Cannot pay for an empty basket');
+        }
+
+        savedBasket.paymentMethod = paymentMethod;
+        savedBasket.status = BasketStatus.CLOSED;
+
+        await savedBasket.save();
+
+        return savedBasket;
     }
 
 }

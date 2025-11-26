@@ -11,5 +11,6 @@ RouterManagement.get('/basket', BasketController.getAllBaskets.bind(BasketContro
 RouterManagement.get('/basket/:clientId', BasketController.getBasketByClientId.bind(BasketController));
 RouterManagement.post('/basket/:clientId/:productId', BasketController.addProductToBasket.bind(BasketController));
 RouterManagement.patch('/basket/:clientId/:productId', BasketController.updateBasketProduct.bind(BasketController));
+RouterManagement.post('/basket/:clientId/payment/:paymentMethod', BasketController.paymentBasket.bind(BasketController));
 
 export default RouterManagement;

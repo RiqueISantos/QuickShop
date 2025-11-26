@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import BasketService from "../Service/BasketService";
+import { PaymentMethod } from "../enums/PaymentMethod";
 
 class BasketController {
     
@@ -21,8 +22,8 @@ class BasketController {
 
     public async getAllBaskets(req: Request, res: Response) {
         try {
-        const baskets = await BasketService.getAllBaskets();
-        return res.status(200).json(baskets);
+            const baskets = await BasketService.getAllBaskets();
+            return res.status(200).json(baskets);
         } catch (error) {
             return res.status(500).json({ message: "Error fetching baskets", error });
         }
@@ -88,6 +89,31 @@ class BasketController {
             return res.status(400).json({ message: error.message });
         }
     }
+
+    public async paymentBasket(req: Request, res: Response){
+
+        try{
+            const { clientId, paymentMethod } = req.params;
+
+            if(!clientId || !paymentMethod) return res.status(400).json({ message: 'ClientId and PaymentMethod are required'});
+
+            const key = paymentMethod.toUpperCase();
+
+            const enumPaymentMethod =  PaymentMethod[key as keyof typeof PaymentMethod];
+
+            if (!enumPaymentMethod) {
+                return res.status(400).json({ message: 'Invalid payment method' });
+            }
+
+            const basket = await BasketService.paymentBasket(clientId, enumPaymentMethod);
+
+            return res.status(200).json(basket);
+        }catch(error: any){
+            return res.status(500).json({ message: error.message });
+        }
+        
+    }
+
 }
 
 export default new BasketController();
