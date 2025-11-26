@@ -26,7 +26,29 @@ class BasketController {
         } catch (error) {
             return res.status(500).json({ message: "Error fetching baskets", error });
         }
-  }
+    }
+
+    public async getBasketByClientId(req: Request, res: Response){
+
+        const { clientId } = req.params;
+
+        try{
+            if(!clientId) {
+                return res.status(400).json({message: "ClientId is required"});
+            }
+
+            const basketByClient = await BasketService.getBasketByClientId(clientId);
+
+            if(!basketByClient) {
+                return res.status(404).json({ message: 'Client not found'});
+            }
+
+            return res.status(200).json(basketByClient);
+        }catch(error){
+            return res.status(500).json({ message: "Error fetching baskets", error });
+        }
+
+    }
 }
 
 export default new BasketController();

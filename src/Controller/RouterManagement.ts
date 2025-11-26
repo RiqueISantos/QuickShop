@@ -8,5 +8,6 @@ RouterManagement.get('/products', ProductsController.getAllProducts.bind(Product
 RouterManagement.get('/products/:id', ProductsController.getProductById.bind(ProductsController));
 RouterManagement.post('/basket', BasketController.createBasket.bind(BasketController));
 RouterManagement.get('/basket', BasketController.getAllBaskets.bind(BasketController));
+RouterManagement.get('/basket/:clientId', BasketController.getBasketByClientId.bind(BasketController));
 
 export default RouterManagement;

@@ -1,6 +1,8 @@
+import { error } from 'console';
 import { BasketStatus } from '../enums/BasketStatus';
 import { PaymentMethod } from '../enums/PaymentMethod';
 import BasketModel, { Basket } from '../models/BasketModel';
+import PlatziStoreService from './PlatziStoreService';
 
 class BasketService {
 
@@ -27,6 +29,13 @@ class BasketService {
 
     async getAllBaskets(){
         return BasketModel.find();
+    }
+
+    async getBasketByClientId(clientId: string){
+        return BasketModel.findOne({
+            clientId,
+            status: BasketStatus.OPEN
+        })
     }
 }
 
