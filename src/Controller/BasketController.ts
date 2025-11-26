@@ -52,7 +52,7 @@ class BasketController {
 
     public async addProductToBasket(req: Request, res: Response){
         const { clientId, productId } = req.params;
-        
+
         try {
             if (!clientId) return res.status(404).json({ message: 'ClientId is required' });
             if (!productId) return res.status(404).json({ message: 'ProductId is required' });
@@ -64,7 +64,31 @@ class BasketController {
             return res.status(500).json({ message: error.message || "Error fetching baskets" });
         }
     }
-}
 
+    public async updateBasketProduct(req: Request, res: Response) {
+        try {
+            const { clientId, productId } = req.params;
+            const { quantity } = req.body;
+
+            if (!clientId || !productId) {
+                return res.status(400).json({ message: 'ClientId and ProductId are required' });
+            }
+
+            if (quantity === undefined || quantity === null) {
+                return res.status(400).json({ message: 'Quantity is required' });
+            }
+
+            const updatedBasket = await BasketService.updateBasket(
+                clientId,
+                productId,
+                quantity
+            );
+            return res.status(200).json(updatedBasket);
+        
+        } catch (error: any) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
+}
 
 export default new BasketController();

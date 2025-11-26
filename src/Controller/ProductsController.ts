@@ -1,5 +1,5 @@
 import { Request, Response} from 'express';
-import PlatziStoreService from '../service/PlatziStoreService';
+import PlatziStoreService from '../Service/PlatziStoreService';
 
 class ProductsController {
     public async getAllProducts(req: Request, res: Response): Promise<Response> {
@@ -11,7 +11,6 @@ class ProductsController {
             return res.status(500).json({ message: 'Error retrieving products', error });
         }
     }
-
 
     public async getProductById(req: Request, res: Response): Promise<Response> {
         const { id } = req.params;

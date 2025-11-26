@@ -2,7 +2,7 @@ import { error } from 'console';
 import { BasketStatus } from '../enums/BasketStatus';
 import { PaymentMethod } from '../enums/PaymentMethod';
 import BasketModel, { Basket } from '../models/BasketModel';
-import PlatziStoreService from './PlatziStoreService';
+import PlatziStoreService from "../Service/PlatziStoreService";
 
 class BasketService {
 
@@ -43,8 +43,8 @@ class BasketService {
         const basket =  await this.getBasketByClientId(clientId);
         const product = await PlatziStoreService.getExternalProductsById(productId);
 
-        if(!basket) throw new Error('Carrinho do cliente não encontrado');
-        if(!product) throw new Error('Produto não encontrado');
+        if(!basket) throw new Error('Customer cart not found.');
+        if(!product) throw new Error('Product not found.');
 
         const index = basket.products.findIndex(p => p.id.toString() === productId.toString());
         
@@ -65,6 +65,32 @@ class BasketService {
 
         return basket;
     }
+
+    async updateBasket(clientId: string, productId: any, quantity: number){
+
+        const basket =  await this.getBasketByClientId(clientId);
+    
+        if(!basket) throw new Error('Customer cart not found.');
+
+        const index = basket.products.findIndex(p => p.id.toString() === productId.toString());
+        
+        if (index === -1) {
+            throw new Error('Product not found in cart.');
+        }
+
+        if(quantity <= 0){
+            basket.products.splice(index,1);
+        }else{
+            basket.products[index].quantity = quantity;
+        }
+
+        basket.totalPrice = basket.products.reduce((sum, p) => sum + p.price * p.quantity, 0);
+
+        await basket.save();
+
+        return basket;
+    }
+
 }
 
 export default new BasketService();
